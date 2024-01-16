@@ -1,7 +1,7 @@
 let modInfo = {
 	name: "The Computer Chips Tree",
 	id: "mymod",
-	author: "nobody",
+	author: "TheGodOfCelestials",
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
 
@@ -13,14 +13,22 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
-	name: "The Start",
+	num: "0.2 Alpha",
+	name: "Inflation growth?",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h3>v0.1</h3><br>
-		- Added 1st Prestige layer.<br>
-		- Added 1st row of upgrades.`
+	<h1>v0.2 Alpha</h1><br>
+	- Added 2nd row of Computer Chips upgrades.<br>
+	- Extended upgrades columns from 3 to 5.<br>
+	- Added a new Prestige Layer.<br>
+	- Added 2 upgrades for the new Prestige layer.<br>
+	- Added a Computers Chip buyable.<br>
+	- Added Achievements tab.<br>
+	- Added 4 Achievements.<br>
+	<h2>v0.1</h1><br> 
+	- Added 1st Prestige layer.<br>
+	- Added 1st row of upgrades.`
 
 let winText = `Congratulations! You have reached the end and beaten this game, but for now...`
 
@@ -45,6 +53,11 @@ function getPointGen() {
 	let gain = new Decimal(1)
 	if(hasUpgrade('C', 11)) gain = gain.times(upgradeEffect('C', 11))
 	if(hasUpgrade('C', 12)) gain = gain.times(upgradeEffect('C', 12))
+	if(hasUpgrade('C', 14)) {
+		gain = gain.times(buyableEffect('C', 11).times(getBuyableAmount('C', 11)))
+	}
+	if(hasAchievement('AC', 11)) gain = gain.times(1.5)
+	if(hasUpgrade('M', 12)) gain = gain.times(upgradeEffect('M', 12))
 	return gain
 }
 
@@ -58,7 +71,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return player.points.gte(new Decimal("1e80"))
 }
 
 
