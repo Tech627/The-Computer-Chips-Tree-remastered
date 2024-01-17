@@ -13,13 +13,22 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2 Alpha",
+	num: "0.2 Beta",
 	name: "Inflation growth?",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h1>v0.2 Alpha</h1><br>
-	- Added 2nd row of Computer Chips upgrades.<br>
+	<h1>v0.2 Beta</h2><br>
+	- Added the 2nd row of Computer Chips upgrades.<br>
+	- Added 3 more upgrades to the Mechanic parts.<br>
+	- Added the 1st Challenge.<br>
+	- Balanced some stuff.<br>
+	- Fixed a buyable gain bug.<br>
+	- 1st Computer Chips buyable can now only be bought 250 times.<br>
+	- Added 3 more Achievements.<br>
+	- Nerfed 5th Computer Chips upgrade cost to 30,000.<br>
+	- Buffed the 2nd Mechanic parts effect.<br>
+	<h2>v0.2 Alpha</h2><br>
 	- Extended upgrades columns from 3 to 5.<br>
 	- Added a new Prestige Layer.<br>
 	- Added 2 upgrades for the new Prestige layer.<br>
@@ -53,11 +62,18 @@ function getPointGen() {
 	let gain = new Decimal(1)
 	if(hasUpgrade('C', 11)) gain = gain.times(upgradeEffect('C', 11))
 	if(hasUpgrade('C', 12)) gain = gain.times(upgradeEffect('C', 12))
-	if(hasUpgrade('C', 14)) {
-		gain = gain.times(buyableEffect('C', 11).times(getBuyableAmount('C', 11)))
+	if(!inChallenge('C', 11)) {
+		if(hasUpgrade('C', 14)) {
+			gain = gain.times(buyableEffect('C', 11).mul(getBuyableAmount('C', 11).sub(getBuyableAmount('C', 11).pow(0.9))))
+			if(hasChallenge('C', 11)) {
+				gain = gain.times(buyableEffect('C', 11).mul(getBuyableAmount('C', 11).sub(getBuyableAmount('C', 11).pow(0.7))))
+			}
+		}
 	}
 	if(hasAchievement('AC', 11)) gain = gain.times(1.5)
 	if(hasUpgrade('M', 12)) gain = gain.times(upgradeEffect('M', 12))
+	if(hasUpgrade('C', 21)) gain = gain.times(upgradeEffect('C', 21))
+	if(hasUpgrade('C', 24)) gain = gain.times(upgradeEffect('C', 24))
 	return gain
 }
 
@@ -71,7 +87,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("1e80"))
+	return player.points.gte(new Decimal("1e10000"))
 }
 
 
