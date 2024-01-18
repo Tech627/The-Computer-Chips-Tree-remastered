@@ -5,20 +5,30 @@ let modInfo = {
 	pointsName: "points",
 	modFiles: ["layers.js", "tree.js"],
 
-	discordName: "",
-	discordLink: "",
+	discordName: "Incremental Universe",
+	discordLink: "https://discord.gg/uQMu2VUuFe",
 	initialStartPoints: new Decimal (10), // Used for hard resets and new players
 	offlineLimit: 1,  // In hours
 }
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.2 Beta",
+	num: "0.2 Release",
 	name: "Inflation growth?",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h1>v0.2 Beta</h2><br>
+	<h1>v0.2 Release</h2><br>
+	- Added new upgrades.<br>
+	- Added milestones.<br>
+	- Mechanic parts have to be unlocked now.<br>
+	- 2nd Computer Chips row upgrades need to be unlocked now.<br>
+	- Added a new challenge.<br>
+	- Added a 3rd layer.<br>
+	- Added upgrades for the 3rd layer.<br>
+	- Added 1 row of achievements.<br>
+	- Added a discord link for my game.<br>
+	<h2>v0.2 Beta</h2><br>
 	- Added the 2nd row of Computer Chips upgrades.<br>
 	- Added 3 more upgrades to the Mechanic parts.<br>
 	- Added the 1st Challenge.<br>
@@ -61,7 +71,12 @@ function getPointGen() {
 
 	let gain = new Decimal(1)
 	if(hasUpgrade('C', 11)) gain = gain.times(upgradeEffect('C', 11))
-	if(hasUpgrade('C', 12)) gain = gain.times(upgradeEffect('C', 12))
+	if(!inChallenge('C', 12)) {
+		if(hasUpgrade('C', 12)) gain = gain.times(upgradeEffect('C', 12))
+		if(hasUpgrade('M', 12)) gain = gain.times(upgradeEffect('M', 12))
+		if(hasUpgrade('C', 21)) gain = gain.times(upgradeEffect('C', 21))
+		if(hasUpgrade('C', 24)) gain = gain.times(upgradeEffect('C', 24))
+	}
 	if(!inChallenge('C', 11)) {
 		if(hasUpgrade('C', 14)) {
 			gain = gain.times(buyableEffect('C', 11).mul(getBuyableAmount('C', 11).sub(getBuyableAmount('C', 11).pow(0.9))))
@@ -71,9 +86,6 @@ function getPointGen() {
 		}
 	}
 	if(hasAchievement('AC', 11)) gain = gain.times(1.5)
-	if(hasUpgrade('M', 12)) gain = gain.times(upgradeEffect('M', 12))
-	if(hasUpgrade('C', 21)) gain = gain.times(upgradeEffect('C', 21))
-	if(hasUpgrade('C', 24)) gain = gain.times(upgradeEffect('C', 24))
 	return gain
 }
 
