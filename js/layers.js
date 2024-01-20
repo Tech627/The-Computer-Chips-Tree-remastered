@@ -333,7 +333,7 @@ addLayer("M", {
         12: {
             title: "Mechanic inventions",
             description: "Your points are boosted by Computer Chips",
-            cost: new Decimal(6),
+            cost: new Decimal(4),
             effect() {
                 let effect = player.C.points.add(1).sqrt(player.C.points.sqrt(player.C.points)).pow(1.5)
                 return effect
