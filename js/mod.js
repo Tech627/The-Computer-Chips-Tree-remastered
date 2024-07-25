@@ -1,14 +1,14 @@
 let modInfo = {
 	name: "The Computer Chips Tree",
 	id: "mymod",
-	author: "TheGodOfCelestials",
+	author: "Celestial Coder",
 	pointsName: "points",
-	modFiles: ["layers.js", "tree.js"],
+	modFiles: ["layers.js", "tree.js", "mechanic.js", "company.js", "boosters.js", "galaxies.js"],
 
 	discordName: "Incremental Universe",
 	discordLink: "https://discord.gg/uQMu2VUuFe",
 	initialStartPoints: new Decimal (10), // Used for hard resets and new players
-	offlineLimit: 1,  // In hours
+	offlineLimit: 0,  // In hours
 }
 
 // Set your version in num and name
@@ -18,7 +18,7 @@ let VERSION = {
 }
 
 let changelog = `<h1>Changelog:</h1><br>
-	<h1>v0.2 Release</h2><br>
+	<h1>v0.2 Release</h1><br>
 	- Added new upgrades.<br>
 	- Added milestones.<br>
 	- Mechanic parts have to be unlocked now.<br>
@@ -28,6 +28,33 @@ let changelog = `<h1>Changelog:</h1><br>
 	- Added upgrades for the 3rd layer.<br>
 	- Added 1 row of achievements.<br>
 	- Added a discord link for my game.<br>
+	- Added in each layer for upgrades representing which are row 1, row 2, etc...<br>
+	- Added a Buyable in 3rd layer.<br>
+	- Added a Mechanic Part Challenge.<br>
+	- Added Company Clickables.<br>
+	- Added 2 new Computer Chips Challenges.<br>
+	- Added new tab in Mechanic Parts.<br>
+	- Added new tab into Computer Chips.<br>
+	<h3> Buffs: </h3><br>
+	- Buffed the Computers Chips buyable.<br>
+	- Buffed the 6th Computers Chips buyable.<br>
+	- Buffed the 1st Mechanic parts upgrade.<br>
+	- Buffed the 3rd Computers Chips upgrade.<br>
+	- Changed the Buyable effect to balance the game.<br>
+	<h3> Nerfs: </h3><br>
+	- Nerfed the 2nd Mechanic parts upgrade.<br>
+	- Made so that there's no offline time.<br>
+	- Nerfed the 2nd Computers Chips upgrade.<br>
+	- Nerfed the 10th Computers Chips upgrade.<br>
+	- Nerfed the 1st Computers Challenge goal.<br>
+	- Nerfed the 5th Computer Chips upgrade cost from 30,000 -> 500.<br>
+	- Nerfed the Company requirement 1e430 -> 1e100.<br>
+	<h3> Style Changes: </h3><br>
+	- Re-worked the entire style of Computers Chips layer.<br>
+	- Changed the Mechanic parts style.<br>
+	- Changed the Company style.<br>
+	- Changed Lore tab color.<br>
+	- Changed the Achievements style.<br>
 	<h2>v0.2 Beta</h2><br>
 	- Added the 2nd row of Computer Chips upgrades.<br>
 	- Added 3 more upgrades to the Mechanic parts.<br>
@@ -71,21 +98,53 @@ function getPointGen() {
 
 	let gain = new Decimal(1)
 	if(hasUpgrade('C', 11)) gain = gain.times(upgradeEffect('C', 11))
-	if(!inChallenge('C', 12)) {
+	if(!inChallenge('C', 12) || !inChallenge('C', 14) || !inChallenge('B', 12)) {
 		if(hasUpgrade('C', 12)) gain = gain.times(upgradeEffect('C', 12))
 		if(hasUpgrade('M', 12)) gain = gain.times(upgradeEffect('M', 12))
 		if(hasUpgrade('C', 21)) gain = gain.times(upgradeEffect('C', 21))
 		if(hasUpgrade('C', 24)) gain = gain.times(upgradeEffect('C', 24))
 	}
-	if(!inChallenge('C', 11)) {
+	if(!inChallenge('C', 11) || !inChallenge('C', 14)) {
 		if(hasUpgrade('C', 14)) {
-			gain = gain.times(buyableEffect('C', 11).mul(getBuyableAmount('C', 11).sub(getBuyableAmount('C', 11).pow(0.9))))
+			gain = gain.times(buyableEffect('C', 11))
 			if(hasChallenge('C', 11)) {
-				gain = gain.times(buyableEffect('C', 11).mul(getBuyableAmount('C', 11).sub(getBuyableAmount('C', 11).pow(0.7))))
+				gain = gain.times(buyableEffect('C', 11).pow(0.7))
 			}
 		}
 	}
+	if(inChallenge('C', 13) || inChallenge('C', 14)) {
+		gain = gain.pow(0.1)
+	}
+	if(hasChallenge('C', 13)) {
+		gain = gain.times(1e20)
+	}
+	if(inChallenge('M', 11)) {
+		gain = gain.pow(0.2)
+	}
+	if(hasUpgrade('B', 12) && !inChallenge('B', 12)) {
+		gain = gain.times(upgradeEffect('B', 12))
+	}
+	if(inChallenge('B', 11)) {
+		gain = gain.pow(0.01)
+	}
+	if(hasChallenge('C', 14)) {
+		gain = gain.times(1e15)
+	}
+	if(inChallenge('B', 12)) {
+		gain = gain.pow(0.1)
+	}
+	if(hasUpgrade('B', 13)) {
+		gain = gain.times(upgradeEffect('B', 13))
+	}
+	if(inChallenge('M', 12)) {
+		gain = gain.pow(0.05)
+	}
+	if(hasChallenge('M', 12)) {
+		gain = gain.times(1e40)
+	}
 	if(hasAchievement('AC', 11)) gain = gain.times(1.5)
+	if(hasUpgrade('G', 11)) gain = gain.times(upgradeEffect('G', 11))
+	gain = gain.times(player.G.points.add(2).mul(player.G.points).add(1))
 	return gain
 }
 
